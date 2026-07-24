@@ -1,0 +1,494 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f4ecd8;
+  --bg-deep: #e8dec2;
+  --text: #2b2b2b;
+  --text-soft: #5a5550;
+  --accent: #c73e3a;
+  --card: #fbf6e9;
+  --card-border: rgba(43, 43, 43, 0.12);
+  --my-bubble: #e8dcc4;
+  --her-card: #fbf6e9;
+  --phone-shell: #1c1c1e;
+  --phone-screen: #f2ead3;
+  --font-family: "Noto Sans SC", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============ 壁纸 ============ */
+html[data-wallpaper="paper"] .chat-bg {
+  background-color: var(--bg);
+  background-image: radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 45%),
+    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--text-soft) 10%, transparent) 0%, transparent 45%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.17 0 0 0 0 0.17 0 0 0 0 0.17 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html[data-wallpaper="dots"] .chat-bg {
+  background-color: var(--bg);
+  background-image: radial-gradient(color-mix(in srgb, var(--text-soft) 35%, transparent) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+html[data-wallpaper="lines"] .chat-bg {
+  background-color: var(--bg);
+  background-image: linear-gradient(to bottom, color-mix(in srgb, var(--text-soft) 15%, transparent) 1px, transparent 1px);
+  background-size: 100% 28px;
+}
+html[data-wallpaper="gradient"] .chat-bg {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-deep) 50%, color-mix(in srgb, var(--accent) 15%, var(--bg)) 100%);
+}
+html[data-wallpaper="plain"] .chat-bg {
+  background: var(--bg);
+}
+html[data-wallpaper="custom"] .chat-bg {
+  background-color: var(--bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ============ 印章 ============ */
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--accent);
+  color: var(--card);
+  font-family: "ZCOOL XiaoWei", serif;
+  font-size: 0.7rem;
+  border-radius: 0.2rem;
+  transform: rotate(-3deg);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent) inset;
+}
+
+/* ============ 滚动条 ============ */
+.fancy-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.fancy-scroll::-webkit-scrollbar-track { background: transparent; }
+.fancy-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text) 20%, transparent);
+  border-radius: 3px;
+}
+.fancy-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--text) 35%, transparent);
+}
+
+/* ============ 字卡基础 ============ */
+.card-face {
+  background: var(--her-card);
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--text) 6%, transparent),
+    0 8px 18px -8px color-mix(in srgb, var(--text) 30%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+.card-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.2 0 0 0 0 0.2 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* 翻卡加载 */
+.flip-loader {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 25%, transparent), transparent);
+  background-size: 200% 100%;
+}
+
+/* ============ 动画 ============ */
+@keyframes cardIn {
+  0% { transform: rotate(-6deg) translateY(12px) scale(0.92); opacity: 0; }
+  100% { transform: rotate(-2deg) translateY(0) scale(1); opacity: 1; }
+}
+@keyframes bubbleIn {
+  0% { transform: translateY(8px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes stampPress {
+  0% { transform: scale(1.6) rotate(-12deg); opacity: 0; }
+  60% { transform: scale(0.9) rotate(-2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes viewFlip {
+  0% { transform: perspective(1800px) rotateY(55deg); opacity: 0; transform-origin: left center; }
+  100% { transform: perspective(1800px) rotateY(0deg); opacity: 1; transform-origin: left center; }
+}
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes slideUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes noteIn {
+  0% { transform: rotate(-4deg) translateY(10px) scale(0.9); opacity: 0; }
+  100% { transform: rotate(-1deg) translateY(0) scale(1); opacity: 1; }
+}
+@keyframes bounceIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  50% { transform: scale(1.05); opacity: 1; }
+  70% { transform: scale(0.96); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes tomatoArc {
+  0% {
+    animation-timing-function: ease-out;
+  }
+  50% {
+    animation-timing-function: ease-in;
+  }
+  100% {
+    animation-timing-function: ease-out;
+  }
+}
+@keyframes tomatoSplat {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 0.6; }
+}
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1);
+    filter: drop-shadow(0 0 4px rgba(255, 255, 200, 0.5));
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+    filter: drop-shadow(0 0 12px rgba(255, 255, 220, 0.9));
+  }
+}
+.animate-twinkle {
+  animation: twinkle 2.4s ease-in-out infinite;
+}
+@keyframes letterFlip {
+  0% { transform: perspective(1200px) rotateY(0deg); opacity: 1; }
+  50% { transform: perspective(1200px) rotateY(-90deg); opacity: 0.3; }
+  100% { transform: perspective(1200px) rotateY(0deg); opacity: 1; }
+}
+.animate-letterFlip {
+  animation: letterFlip 0.55s ease-in-out both;
+}
+
+.animate-cardIn { animation: cardIn 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-bubbleIn { animation: bubbleIn 0.32s ease-out both; }
+.animate-stampPress { animation: stampPress 0.5s ease-out both; }
+.animate-shimmer { animation: shimmer 1.4s linear infinite; }
+.animate-viewFlip { animation: viewFlip 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-popIn { animation: popIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-slideUp { animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-noteIn { animation: noteIn 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-bounceIn { animation: bounceIn 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ============ 网格/辅助 ============ */
+.spark-grid {
+  background-image: linear-gradient(color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--text) 8%, transparent) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+/* 手机屏幕纹理 */
+.phone-screen-bg {
+  background-color: var(--phone-screen);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n2)'/%3E%3C/svg%3E");
+}
+
+/* ============ 萌主题 ============ */
+html[data-theme="cute-moe"] .chat-bg {
+  background-image: url('https://i.postimg.cc/528g6Ysj/Screenshot-20260715-002626.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+html[data-theme="cute-moe"] .cute-header {
+  background-image: url('https://i.postimg.cc/sgfFjmg4/Screenshot-20260714-221404.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html[data-theme="cute-moe"] .cute-header h1 {
+  color: #5F7A8C !important;
+}
+
+html[data-theme="cute-moe"] .cute-input-bar {
+  background-image: url('https://i.postimg.cc/KYKHjHST/Screenshot-20260714-221624.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html[data-theme="cute-moe"] .cute-send-btn {
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 48px !important;
+  height: 48px !important;
+  border: none !important;
+}
+
+html[data-theme="cute-moe"] .cute-send-btn::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://i.postimg.cc/fy7yYCXD/retouch-2026071421514316.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+html[data-theme="cute-moe"] .cute-send-btn:disabled {
+  opacity: 0.3 !important;
+}
+
+html[data-theme="cute-moe"] .cute-sticker-btn {
+  background: transparent !important;
+  border: none !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+
+html[data-theme="cute-moe"] .cute-sticker-btn::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://i.postimg.cc/fW11dZT7/retouch-2026071422013733.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+html[data-theme="cute-moe"] .cute-image-btn {
+  background: transparent !important;
+  border: none !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+
+html[data-theme="cute-moe"] .cute-image-btn::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://i.postimg.cc/BbwSTzbJ/retouch-2026071422075959.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+html[data-theme="cute-moe"] .cute-music-btn {
+  background-image: url('https://i.postimg.cc/3xNpHMm4/Screenshot-20260714-220506.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+html[data-theme="cute-moe"] .message-bubble {
+  box-shadow: none !important;
+  border-width: 0 !important;
+  position: relative;
+  overflow: visible !important;
+}
+
+html[data-theme="cute-moe"] .message-received {
+  border: 1px solid #D4B8B8 !important;
+  color: #5F7A8C !important;
+  border-radius: 24px 24px 24px 4px !important;
+  padding: 8px 14px !important;
+  margin-bottom: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  position: relative !important;
+  background: #FFF5F5 !important;
+  z-index: 1;
+  width: fit-content !important;
+  max-width: none !important;
+}
+
+html[data-theme="cute-moe"] .message-sent {
+  border: 1px solid #b0d4e8 !important;
+  color: #5F7A8C !important;
+  border-radius: 24px 24px 4px 24px !important;
+  padding: 8px 14px !important;
+  margin-bottom: 8px !important;
+  box-shadow: 0 2px 4px rgba(180, 120, 140, 0.15) !important;
+  position: relative !important;
+  background: #F0F8FF !important;
+  z-index: 1;
+  width: fit-content !important;
+  max-width: none !important;
+}
+
+html[data-theme="cute-moe"] .message-received::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 24px;
+  height: 24px;
+  background-image: url('https://file.icve.com.cn/file_doc/qdqqd/5851772989927230.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html[data-theme="cute-moe"] .message-received::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: -8px;
+  width: 30px;
+  height: 30px;
+  background-image: url('https://cdncs.ykt.cbern.com.cn/v0.1/download?path=/zxx_feedback/qdqqd/1772986940294.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html[data-theme="cute-moe"] .message-sent::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -8px;
+  width: 30px;
+  height: 30px;
+  background-image: url('https://cdn.waimaimingtang.com/file/images/bwc/20260309001623-4a317f9080.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
+html[data-theme="cute-moe"] .message-sent::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: -6px;
+  width: 22px;
+  height: 22px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23668899' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ============ 萌主题 · 音乐播放器 ============ */
+html[data-theme="cute-moe"] .cute-music-app .cute-music-cover {
+  background-image: url('https://i.postimg.cc/3xNpHMm4/Screenshot-20260714-220506.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+  border: none !important;
+}
+
+html[data-theme="cute-moe"] .cute-music-player-fullscreen {
+  background-image: url('https://i.postimg.cc/2yKvm8w7/Camera-XHS-17840462551361040g2sg317haqv5h3u705oq4lp3654ovo179du8.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-color: transparent !important;
+}
+
+html[data-theme="cute-moe"] .cute-music-app .cute-music-disc {
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 4px 12px rgba(180, 120, 140, 0.2);
+}
+
+html[data-theme="cute-moe"] .cute-music-app .cute-music-volume::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #E88B8B;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(180, 120, 140, 0.3);
+}
+
+html[data-theme="cute-moe"] .cute-music-app .cute-music-volume::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #E88B8B;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(180, 120, 140, 0.3);
+}
+
+html[data-theme="cute-moe"] .cute-music-app .font-serif {
+  color: #5F7A8C !important;
+}
+
+html[data-theme="cute-moe"] .cute-music-app .text-sm {
+  color: #5F7A8C;
+}
+
+html[data-theme="cute-moe"] .cute-music-app .text-xs {
+  color: #8BA8B8;
+}
+
+html[data-theme="cute-moe"] .cute-music-app input[type="range"]::-webkit-slider-thumb {
+  background: #E88B8B;
+}
+
+/* 萌主题下除气泡外的辅助元素统一浅粉色 */
+html[data-theme="cute-moe"] .cute-header,
+html[data-theme="cute-moe"] .cute-input-bar {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+html[data-theme="cute-moe"] .cute-send-btn,
+html[data-theme="cute-moe"] .cute-sticker-btn,
+html[data-theme="cute-moe"] .cute-image-btn {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 唱片旋转动画 */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}

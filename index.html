@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>苜蓿</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+XiaoWei&family=JetBrains+Mono:wght@400;500&family=M+PLUS+Rounded+1c:wght@400;500;700&family=ZCOOL+KuaiLe&family=LXGW+WenKai&family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=Press+Start+2P&family=Playfair+Display:wght@400;500;600&family=Caveat:wght@400;500;600&family=UnifrakturCook:wght@700&family=Bungee+Shade&family=Nanum+Pen+Script&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      if (import.meta.hot?.on) {
+        import.meta.hot.on('vite:error', (error) => {
+          if (error.err) {
+            console.error(
+              [error.err.message, error.err.frame].filter(Boolean).join('\n'),
+            )
+          }
+        })
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // 检测主 JS 加载失败（通常是缓存了旧 index.html 导致 404），自动硬刷新一次
+      (function () {
+        var attempted = sessionStorage.getItem('__reload_attempted__');
+        if (attempted) return; // 已经尝试过一次，不再循环
+        var scripts = document.querySelectorAll('script[type="module"][src]');
+        scripts.forEach(function (s) {
+          var src = s.getAttribute('src') || '';
+          if (!src) return;
+          fetch(src, { method: 'HEAD', cache: 'no-store' }).then(function (r) {
+            if (!r.ok) {
+              sessionStorage.setItem('__reload_attempted__', '1');
+              location.reload();
+            }
+          }).catch(function () {
+            sessionStorage.setItem('__reload_attempted__', '1');
+            location.reload();
+          });
+        });
+        // 清除标记，让下次失败还能重试
+        setTimeout(function () {
+          sessionStorage.removeItem('__reload_attempted__');
+        }, 10000);
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+

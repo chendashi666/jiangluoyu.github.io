@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#2B2B2B"/>
+  <rect x="5" y="9" width="14" height="14" rx="2" fill="#FBF6E9" stroke="#C73E3A" stroke-width="1.5" transform="rotate(-6 12 16)"/>
+  <rect x="14" y="11" width="14" height="10" rx="2" fill="#C73E3A"/>
+  <text x="21" y="18.5" font-family="serif" font-size="7" fill="#FBF6E9" text-anchor="middle" font-weight="bold">卡</text>
+</svg>
