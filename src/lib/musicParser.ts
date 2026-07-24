@@ -1,12 +1,13 @@
 /**
  * musicParser.ts — 酷狗 / 网易云音乐分享链接解析器
  *
- * 流程：
- *   酷狗: 抓分享页 HTML → 提取 hash → 调移动端 API (m.kugou.com) 换 url+歌名
- *   网易云: 正则提取 id → 调 detail API 拿歌名 → 拼接标准外链 URL
+ * 双环境适配：
+ *   本地 dev (localhost) → Vite proxy (/api/kg, /api/ne) 转发，速度快
+ *   生产环境 (GitHub Pages) → 公共 CORS 代理，绕过跨域限制
  *
- * 所有请求通过 Vite proxy 转发，绕过 CORS。
- * 酷狗 CDN (sharefs.kugou.com) 不校验 Referer，可直接播放。
+ * 流程：
+ *   酷狗: 抓分享页 HTML → 提取 hash → 调移动端 API 换 url+歌名
+ *   网易云: 正则提取 id → 调 detail API 拿歌名 → 拼接标准外链
  */
 
 export type MusicPlatform = "kugou" | "netease" | "unknown";
@@ -14,6 +15,32 @@ export type MusicPlatform = "kugou" | "netease" | "unknown";
 export interface ParseResult {
   title: string;
   audioUrl: string;
+}
+
+// ==================== 环境感知的请求函数 ====================
+
+const isDev = typeof window !== "undefined" && window.location.hostname === "localhost";
+
+// 公共 CORS 代理（生产环境用）
+const CORS_PROXY = "https://corsproxy.io/?";
+
+/**
+ * 根据环境选择请求路径：
+ *   dev  → 走 Vite proxy 相对路径（/api/kg/...）
+ *   prod → 走 CORS 代理 + 完整外部 URL
+ */
+function kgFetch(path: string, options?: RequestInit): Promise<Response> {
+  if (isDev) {
+    return fetch(`/api/kg${path}`, options);
+  }
+  return fetch(`${CORS_PROXY}${encodeURIComponent("https://m.kugou.com" + path)}`, options);
+}
+
+function neFetch(path: string, options?: RequestInit): Promise<Response> {
+  if (isDev) {
+    return fetch(`/api/ne${path}`, options);
+  }
+  return fetch(`${CORS_PROXY}${encodeURIComponent("https://music.163.com" + path)}`, options);
 }
 
 // ==================== 平台检测 ====================
@@ -37,8 +64,8 @@ async function parseKugou(url: string): Promise<ParseResult | null> {
   let hash = "";
   let title = "";
   try {
-    const resp = await fetch(
-      `/api/kg/share/song.html?chain=${encodeURIComponent(chain)}`,
+    const resp = await kgFetch(
+      `/share/song.html?chain=${encodeURIComponent(chain)}`,
       { headers: { Accept: "text/html" } }
     );
     if (!resp.ok) return null;
@@ -63,30 +90,29 @@ async function parseKugou(url: string): Promise<ParseResult | null> {
     return title ? { title, audioUrl: url } : null;
   }
 
-  // 3. 用移动端 API 获取 CDN 直链 + 歌名（比 wwwapi 稳定，不会被 Access Deny）
+  // 3. 用移动端 API 获取 CDN 直链 + 歌名
   let audioUrl = "";
   try {
-    const playResp = await fetch(
-      `/api/kg/app/i/getSongInfo.php?cmd=playInfo&hash=${hash}`,
+    const playResp = await kgFetch(
+      `/app/i/getSongInfo.php?cmd=playInfo&hash=${hash}`,
       { headers: { Accept: "application/json" } }
     );
     if (playResp.ok) {
       const data = await playResp.json();
       audioUrl = data?.url || "";
 
-      // API 返回的歌名 > HTML title（更准确）
+      // API 返回的歌名 > HTML title
       if (data?.songName) {
         const author = data?.authors?.[0]?.author_name;
         title = author ? `${author} - ${data.songName}` : data.songName;
       }
     }
   } catch {
-    // play API 失败
+    // play API 失败，audioUrl 留空
   }
 
   if (!title) title = "酷狗歌曲";
 
-  // CDN 直链可直接播放（sharefs.kugou.com 不校验 Referer）
   return { title, audioUrl: audioUrl || url };
 }
 
@@ -99,8 +125,8 @@ async function parseNetease(url: string): Promise<ParseResult | null> {
 
   let title = "";
   try {
-    const detailResp = await fetch(
-      `/api/ne/api/song/detail?ids=%5B${id}%5D`,
+    const detailResp = await neFetch(
+      `/api/song/detail?ids=%5B${id}%5D`,
       { headers: { Accept: "application/json" } }
     );
     if (detailResp.ok) {
