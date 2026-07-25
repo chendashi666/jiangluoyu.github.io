@@ -13,10 +13,6 @@ const BASE = import.meta.env.BASE_URL; // 例: "/jiangluoyu.github.io/"
 
 export const LOCAL_SONGS: LocalSong[] = [
   {
-    title: "Beyond - 海阔天空",
-    url: `${BASE}music/Beyond - 海阔天空.flac`,
-  },
-  {
     title: "静音恋人 (两颗缠绕的心) - 礼越",
     url: `${BASE}music/静音恋人 (两颗缠绕的心) - 礼越.mp3`,
   },
