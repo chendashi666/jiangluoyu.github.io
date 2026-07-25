@@ -16,5 +16,20 @@ export const LOCAL_SONGS: LocalSong[] = [
     title: "Beyond - 海阔天空",
     url: `${BASE}music/Beyond - 海阔天空.flac`,
   },
-  // 添加更多：把文件放进 public/music/，在这里加条目
+  {
+    title: "静音恋人 (两颗缠绕的心) - 礼越",
+    url: `${BASE}music/静音恋人 (两颗缠绕的心) - 礼越.mp3`,
+  },
+  {
+    title: "樱花草 - Sweety",
+    url: `${BASE}music/樱花草 - Sweety.mp3`,
+  },
+  {
+    title: "浴室 - deca joins",
+    url: `${BASE}music/浴室 - deca joins.mp3`,
+  },
+  {
+    title: "ANGEL - 윤미래&Tiger JK&비지",
+    url: `${BASE}music/ANGEL - 윤미래&Tiger JK&비지.mp3`,
+  },
 ];
