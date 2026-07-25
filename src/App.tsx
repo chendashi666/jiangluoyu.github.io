@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
+import FlightChessPage from "@/pages/FlightChessPage";
 import ThemeApplier from "@/theme/ThemeApplier";
 import FloatingPhone from "@/components/FloatingPhone";
 import FloatingMusic from "@/components/FloatingMusic";
@@ -103,6 +104,30 @@ export default function App() {
         <Router basename={basename}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route
+              path="/flight-chess"
+              element={
+                <ErrorBoundary
+                  fallback={
+                    <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-br from-purple-500 to-pink-500 p-8 text-center text-white">
+                      <div className="text-5xl">😵</div>
+                      <h2 className="text-lg font-bold">飞行棋出了点问题</h2>
+                      <button
+                        onClick={() => {
+                          sessionStorage.removeItem("flight-chess-entered");
+                          window.location.href = window.location.origin + window.location.pathname;
+                        }}
+                        className="rounded-full bg-white px-6 py-2 text-sm font-bold text-purple-600"
+                      >
+                        返回主页
+                      </button>
+                    </div>
+                  }
+                >
+                  <FlightChessPage />
+                </ErrorBoundary>
+              }
+            />
           </Routes>
         </Router>
       </ErrorBoundary>

@@ -11,10 +11,11 @@ import MusicApp from "./apps/MusicApp";
 import WeatherApp from "./apps/WeatherApp";
 import TomatoApp from "./apps/TomatoApp";
 import PetApp from "./apps/PetApp";
+import FlyChessApp from "./apps/FlyChessApp";
 import HomeScreen from "./apps/HomeScreen";
 import { useAppStore } from "@/store/app";
 
-export type PhoneAppId = "home" | "chat" | "body" | "mood" | "work" | "travel" | "meals" | "phone" | "music" | "weather" | "tomato" | "driftbottle" | "pet";
+export type PhoneAppId = "home" | "chat" | "body" | "mood" | "work" | "travel" | "meals" | "phone" | "music" | "weather" | "tomato" | "driftbottle" | "pet" | "flychess";
 
 // 可爱简约图标（SVG）
 const ChatIcon = ({ color }: { color: string }) => (
@@ -163,6 +164,24 @@ const StarIcon = ({ color }: { color: string }) => (
   </svg>
 );
 
+const PlaneIcon = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 32 32" className="h-7 w-7">
+    <path
+      d="M16 4l12 12-5 2-3 6-2 2-2-2-3-6-5-2 12-12z"
+      fill={color}
+      opacity="0.25"
+    />
+    <path
+      d="M16 4l12 12-5 2-3 6-2 2-2-2-3-6-5-2 12-12z"
+      fill="none"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    <circle cx="16" cy="14" r="2" fill={color} opacity="0.6" />
+  </svg>
+);
+
 const PetIcon = ({ color }: { color: string }) => (
   <svg viewBox="0 0 32 32" className="h-7 w-7">
     <ellipse cx="16" cy="18" rx="9" ry="8" fill={color} opacity="0.18" />
@@ -188,6 +207,7 @@ const APPS: { id: PhoneAppId; name: string; Icon: (p: { color: string }) => JSX.
   { id: "music", name: "音乐", Icon: MusicNoteIcon, color: "#E91E63" },
   { id: "tomato", name: "番茄计数器", Icon: TomatoIcon, color: "#FF6B6B" },
   { id: "pet", name: "○", Icon: PetIcon, color: "#FF9EB3" },
+  { id: "flychess", name: "飞行棋", Icon: PlaneIcon, color: "#5C9EFF" },
   { id: "driftbottle", name: "漂流瓶", Icon: StarIcon, color: "#0066B3" },
 ];
 
@@ -222,6 +242,7 @@ export default function PhoneTabs() {
         {app === "music" && <MusicApp onBack={() => setApp("home")} />}
         {app === "weather" && <WeatherApp onBack={() => setApp("home")} />}
         {app === "tomato" && <TomatoApp onBack={() => setApp("home")} />}
+        {app === "flychess" && <FlyChessApp onBack={() => setApp("home")} />}
         {app === "pet" && <PetApp onBack={() => setApp("home")} />}
       </div>
 
