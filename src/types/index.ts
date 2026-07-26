@@ -6,7 +6,7 @@ export type ViewSide = "me" | "her";
 export interface Message {
   id: string;
   sender: Sender;
-  type: "text" | "card" | "note" | "sticker" | "system" | "rps" | "poll" | "music" | "image";
+  type: "text" | "card" | "note" | "sticker" | "system" | "rps" | "poll" | "music" | "image" | "flychess";
   text?: string;
   card?: import("./card").Card;
   noteMood?: string;
@@ -32,6 +32,12 @@ export interface Message {
     votes: Record<string, number>;
     voters: Record<string, number>;
     resolved: boolean;
+  };
+  flychess?: {
+    playerCount: 2 | 3 | 4;
+    players: string[];
+    started: boolean;
+    gameId: string;
   };
   systemText?: string;
   quoteId?: string;

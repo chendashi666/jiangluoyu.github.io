@@ -99,6 +99,7 @@ interface ConversationStore {
   sendImageInConv: (conversationId: string, image: string, senderId: string) => void;
   sendRPS: (conversationId: string, targetId: string, myChoice: "rock" | "paper" | "scissors") => void;
   sendPoll: (conversationId: string, question: string, options: string[]) => void;
+  sendFlyChess: (conversationId: string, playerCount: 2 | 3 | 4) => void;
   quoteMessage: (conversationId: string, messageId: string) => void;
   recallMessage: (conversationId: string, messageId: string) => void;
   deleteMessage: (conversationId: string, messageId: string) => void;
@@ -2340,6 +2341,31 @@ export const useAppStore = create<
             votes,
             voters,
             resolved: true,
+          },
+          timestamp: Date.now(),
+        };
+        set((s) => ({
+          conversations: s.conversations.map((c) =>
+            c.id === conversationId ? { ...c, messages: [...c.messages, msg] } : c
+          ),
+        }));
+      },
+
+      sendFlyChess: (conversationId, playerCount) => {
+        const conv = get().conversations.find((c) => c.id === conversationId);
+        if (!conv) return;
+        const shuffled = [...conv.memberIds].sort(() => Math.random() - 0.5);
+        const selectedPlayers = shuffled.slice(0, playerCount - 1);
+        const players = ['me', ...selectedPlayers];
+        const msg: Message = {
+          id: uid('flychess'),
+          sender: 'me',
+          type: 'flychess',
+          flychess: {
+            playerCount,
+            players,
+            started: true,
+            gameId: uid('flychess'),
           },
           timestamp: Date.now(),
         };
